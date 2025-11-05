@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>오늘의 감정 나무</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 50px;
+      background-color: #f0f4f8;
+      font-family: 'Pretendard', sans-serif;
+      padding: 40px;
+    }
+
+    /* 🌳 나무 부분 */
+    .tree {
+      position: relative;
+      width: 300px;
+      height: 500px;
+    }
+
+    .trunk {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 150px;
+      background-color: #8b5a2b;
+      border-radius: 10px;
+    }
+
+    .crown {
+      position: absolute;
+      bottom: 120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 200px;
+      height: 200px;
+      background-color: #4caf50;
+      border-radius: 50%;
+    }
+
+    /* 📜 감정 리스트 */
+    .note {
+      background-color: #efb772;
+      width: 350px;
+      min-height: 400px;
+      border: 2px solid #d1c7a1;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 3px 3px 8px rgba(0,0,0,0.1);
+    }
+
+    .note h2 {
+      text-align: center;
+      color: #7b5e2b;
+    }
+
+    .emotion-item {
+      padding: 10px;
+      margin: 10px 0;
+  border-left: 8px solid #9ccc86;
+  background: hsl(50, 82%, 76%) 82%, 76%); /* 연한 초록 */
+      border-radius: 5px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    input, button {
+      padding: 8px;
+      font-size: 14px;
+    }
+
+    button {
+      background-color: hsl(45, 97%, 63%) 97%, 63%) 97%, 63%) 97%, 63%) 97%, 63%) 97%, 63%) 97%, 63%) 97%, 63%) 97%, 63%);
+      color: rgb(81, 209, 58)
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    button:hover {
+      background-color: hsl(46, 73%, 71%)
+    }
+  </style>
+</head>
+<body>
+
+  <div class="tree">
+    <div class="trunk"></div>
+    <div class="crown"></div>
+  </div>
+
+  <div class="note">
+    <h2>오늘의 감정 기록</h2>
+    <form id="emotionForm">
+      <input type="text" id="emotion" placeholder="오늘의 감정 (예: 행복)" required />
+      <input type="text" id="reason" placeholder="이유를 적어주세요" required />
+      <input type="color" id="color" value="#4caf50" />
+      <div style="display:flex;gap:8px;align-items:center;">
+        <label style="font-size:13px">기둥 색</label>
+        <input type="color" id="trunkColor" value="#8b5a2b" />
+        <label style="font-size:13px">크라운 색</label>
+        <input type="color" id="crownColor" value="#4caf50" />
+      </div>
+      <button type="submit">추가 🍃</button>
+    </form>
+
+    <div id="emotionList"></div>
+
+    <div style="margin-top:12px;display:flex;gap:8px;">
+      <button id="saveTree">나무 저장</button>
+      <button id="newTree">하나 더 만들기</button>
+      <button id="viewTrees">나의 나무 모음집</button>
+    </div>
+
+    <!-- trees modal -->
+    <div id="treesModal" style="display:none;position:fixed;inset:0;align-items:center;justify-content:center;background:rgba(0,0,0,0.4);">
+      <div style="background:hsl(41, 81%, 69%) 84%, 78%);padding:18px;border-radius:8px;width:420px;max-width:92%;max-height:70vh;overflow:auto;">
+        <h3>나의 나무 모음집</h3>
+        <div id="treesList"></div>
+        <div style="text-align:right;margin-top:8px;"><button id="closeTrees">닫기</button></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("emotionForm");
+    const list = document.getElementById("emotionList");
+  const trunkEl = document.querySelector('.trunk');
+  const crownEl = document.querySelector('.crown');
+  const trunkColor = document.getElementById('trunkColor');
+  const crownColor = document.getElementById('crownColor');
+
+    // 저장된 감정 불러오기
+    const emotions = JSON.parse(localStorage.getItem("emotions")) || [];
+
+    function renderList() {
+      list.innerHTML = "";
+      emotions.forEach((item, index) => {
+        const div = document.createElement("div");
+        div.className = "emotion-item";
+        div.style.borderLeftColor = item.color;
+        div.innerHTML = `<strong>${item.emotion}</strong> - ${item.reason}`;
+        list.appendChild(div);
+      });
+  // apply saved tree colors if present
+  const savedTrunk = localStorage.getItem('trunkColor');
+  const savedCrown = localStorage.getItem('crownColor');
+  if(savedTrunk) trunkEl.style.backgroundColor = savedTrunk;
+  if(savedCrown) crownEl.style.backgroundColor = savedCrown;
+    }
+
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+      const emotion = document.getElementById("emotion").value;
+      const reason = document.getElementById("reason").value;
+      const color = document.getElementById("color").value;
+
+      emotions.push({ emotion, reason, color });
+      localStorage.setItem("emotions", JSON.stringify(emotions));
+
+  // persist current trunk/crown colors
+  localStorage.setItem('trunkColor', trunkColor.value);
+  localStorage.setItem('crownColor', crownColor.value);
+
+      form.reset();
+      renderList();
+    });
+
+    renderList();
+
+    // Trees archive handlers
+    const saveTreeBtn = document.getElementById('saveTree');
+    const newTreeBtn = document.getElementById('newTree');
+    const viewTreesBtn = document.getElementById('viewTrees');
+    const treesModal = document.getElementById('treesModal');
+    const treesList = document.getElementById('treesList');
+    const closeTrees = document.getElementById('closeTrees');
+
+    function saveTree(){
+      const archives = JSON.parse(localStorage.getItem('treeArchives')||'[]');
+      const name = prompt('나무 이름을 입력하세요 (생략 시 기본명)');
+  const item = { id: Date.now(), name: name || `나무 ${archives.length+1}`, emotions: emotions.slice(), trunkColor: trunkColor.value, crownColor: crownColor.value, created: new Date().toISOString() };
+      archives.push(item);
+      localStorage.setItem('treeArchives', JSON.stringify(archives));
+      alert('나무가 저장되었습니다.');
+    }
+
+    function renderTrees(){
+      treesList.innerHTML = '';
+      const archives = JSON.parse(localStorage.getItem('treeArchives')||'[]');
+      if(!archives.length) treesList.innerHTML = '<p>저장된 나무가 없습니다.</p>';
+      archives.slice().reverse().forEach(a=>{
+  const el = document.createElement('div');
+        el.style.display = 'flex'; el.style.justifyContent='space-between'; el.style.alignItems='center'; el.style.padding='8px'; el.style.border='1px solid #eee'; el.style.marginTop='8px'; el.style.borderRadius='6px';
+        el.innerHTML = `<div><strong>${a.name}</strong><div style="font-size:12px;color:#666">${new Date(a.created).toLocaleString()}</div></div>`;
+        const controls = document.createElement('div');
+        const loadBtn = document.createElement('button'); loadBtn.textContent='불러오기'; loadBtn.style.marginRight='6px'; loadBtn.addEventListener('click', ()=>{ if(confirm('이 나무로 불러오시겠습니까? 현재 내용은 덮어 써집니다.')){ emotions.length = 0; a.emotions.forEach(it=> emotions.push(it)); localStorage.setItem('emotions', JSON.stringify(emotions)); // restore colors
+          if(a.trunkColor) { trunkEl.style.backgroundColor = a.trunkColor; localStorage.setItem('trunkColor', a.trunkColor); trunkColor.value = a.trunkColor; }
+          if(a.crownColor) { crownEl.style.backgroundColor = a.crownColor; localStorage.setItem('crownColor', a.crownColor); crownColor.value = a.crownColor; }
+          renderList(); treesModal.style.display='none'; }});
+        const delBtn = document.createElement('button'); delBtn.textContent='삭제'; delBtn.addEventListener('click', ()=>{ if(confirm('정말 삭제하시겠습니까?')){ let list = JSON.parse(localStorage.getItem('treeArchives')||'[]'); list = list.filter(x=> x.id !== a.id); localStorage.setItem('treeArchives', JSON.stringify(list)); renderTrees(); } });
+        controls.appendChild(loadBtn); controls.appendChild(delBtn);
+        el.appendChild(controls);
+        treesList.appendChild(el);
+      });
+    }
+
+    saveTreeBtn.addEventListener('click', saveTree);
+    newTreeBtn.addEventListener('click', ()=>{
+      if(!confirm('새로운 나무를 만드시겠습니까? 현재 입력한 감정은 초기화됩니다.')) return;
+      emotions.length = 0; localStorage.setItem('emotions', JSON.stringify(emotions)); renderList();
+    });
+    viewTreesBtn.addEventListener('click', ()=>{ renderTrees(); treesModal.style.display='flex'; });
+    closeTrees.addEventListener('click', ()=> treesModal.style.display='none');
+  </script>
+
+</body>
+</html>
+

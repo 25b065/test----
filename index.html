@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>오늘의 감정 나무</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>오늘의 감정 나무</h1>
+
+    <section class="tree-area">
+      <div class="tree">
+        <div class="trunk"></div>
+        <div class="canopy">
+          <!-- 6 leaf placeholders -->
+          <div class="leaf" data-index="0"></div>
+          <div class="leaf" data-index="1"></div>
+          <div class="leaf" data-index="2"></div>
+          <div class="leaf" data-index="3"></div>
+          <div class="leaf" data-index="4"></div>
+          <div class="leaf" data-index="5"></div>
+        </div>
+        <div class="roots" aria-hidden="true">
+          <div class="root root-left"></div>
+          <div class="root root-right"></div>
+        </div>
+      </div>
+
+      <aside class="panel">
+        <h2>선택된 잎</h2>
+        <div id="selected-info">
+          <p>잎을 클릭해 감정과 이유를 적어보세요.</p>
+        </div>
+
+        <label>감정 선택
+          <select id="emotion-select">
+            <option value="neutral">보통</option>
+            <option value="happy">기쁨</option>
+            <option value="sad">슬픔</option>
+            <option value="angry">화남</option>
+            <option value="anxious">불안</option>
+            <option value="grateful">감사</option>
+          </select>
+        </label>
+
+        <label>잎 색 선택
+          <input type="color" id="color-picker" value="#7bb451" />
+        </label>
+        <button id="auto-color">감정으로 색 자동 지정</button>
+
+        <label>이유
+          <textarea id="reason" rows="4" placeholder="왜 그런 감정이 들었나요?"></textarea>
+        </label>
+
+        <button id="save-leaf">저장</button>
+        <button id="clear-leaf">초기화</button>
+
+        <hr />
+
+        <h3>오늘의 감사 (최대 10개)</h3>
+        <div id="gratitude-list">
+          <!-- 10 inputs -->
+        </div>
+        <button id="save-gratitude">감사 저장</button>
+
+        <hr />
+
+        <div id="suggestions">
+          <h3>위로 / 해결책 / 피드백</h3>
+          <div id="advice">감정을 선택하고 저장하면 맞춤 조언이 표시됩니다.</div>
+        </div>
+
+        <hr />
+        <div class="archive-actions">
+          <button id="export">저장된 데이터 내보내기</button>
+          <button id="import">불러오기</button>
+        </div>
+        <div class="archive-actions">
+          <button id="archive-btn">나의 나무 모음 집</button>
+          <button id="gratitude-archive-btn">감사 모음집</button>
+        </div>
+        <input type="file" id="import-file" accept="application/json" style="display:none" />
+      </aside>
+    </section>
+
+  </main>
+  <!-- 합체 모달 -->
+  <div id="combine-modal" class="modal" aria-hidden="true">
+    <div class="modal-content">
+      <h2>나무가 완성됐어요!</h2>
+  <p>6개의 잎을 모두 채우셨습니다. 오늘 하루 있었던 감사한 일 10가지를 적어주세요.</p>
+      <div id="modal-gratitude-list"></div>
+      <div class="modal-actions">
+        <button id="modal-save">저장하고 닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 합체 애니메이션 오버레이 -->
+  <div id="combine-effect" class="combine-effect" aria-hidden="true"></div>
+
+  <!-- 아카이브(나의 나무 모음 집) 모달 -->
+  <div id="archive-modal" class="modal" aria-hidden="true">
+    <div class="modal-content">
+      <h2>나의 나무 모음 집</h2>
+      <p>지금까지 저장한 나무들입니다.</p>
+      <div id="archive-list"></div>
+      <div class="modal-actions">
+        <button id="archive-close">닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 감사 아카이브 모달 -->
+  <div id="gratitude-archive-modal" class="modal" aria-hidden="true">
+    <div class="modal-content">
+      <h2>감사 모음집</h2>
+      <p>저장된 감사 항목들입니다.</p>
+      <div id="gratitude-archive-list"></div>
+      <div class="modal-actions">
+        <button id="gratitude-archive-close">닫기</button>
+      </div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

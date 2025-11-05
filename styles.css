@@ -1,0 +1,84 @@
+:root{
+  --bg:#f9fbfa;
+  --leaf-size:70px;
+  --trunk:#8b5a2b;
+}
+body{font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', 'Spoqa Han Sans', 'Helvetica Neue', Arial; background:var(--bg); color:#1b1b1b;}
+.container{max-width:1100px;margin:28px auto;padding:20px}
+h1{text-align:center}
+.tree-area{display:flex;gap:18px}
+.tree{flex:1;display:flex;align-items:flex-end;justify-content:center;position:relative;padding:40px}
+.trunk{width:80px;height:320px;background:var(--trunk);border-radius:40px 40px 0 0;margin-top:40px}
+.canopy{position:absolute;top:0;left:50%;transform:translateX(-50%);width:420px;height:220px}
+.leaf{width:var(--leaf-size);height:var(--leaf-size);border-radius:50% 50% 50% 50%;position:absolute;background:rgba(120,180,80,0.15);border:2px dashed rgba(0,0,0,0.06);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .14s, box-shadow .14s}
+.leaf:hover{transform:scale(1.06);box-shadow:0 6px 18px rgba(0,0,0,0.08)}
+.leaf[data-index="0"]{left:34%;top:14%}
+.leaf[data-index="1"]{left:58%;top:6%}
+.leaf[data-index="2"]{left:72%;top:32%}
+.leaf[data-index="3"]{left:46%;top:40%}
+.leaf[data-index="4"]{left:18%;top:34%}
+.leaf[data-index="5"]{left:62%;top:54%}
+.leaf[data-index="5"]{left:62%;top:54%}
+.leaf[data-index="4"]{left:18%;top:34%}
+.leaf[data-index="3"]{left:46%;top:40%}
+.leaf[data-index="2"]{left:72%;top:32%}
+.leaf[data-index="1"]{left:58%;top:6%}
+.leaf[data-index="0"]{left:34%;top:14%}
+
+.panel{width:360px;background:#fff;padding:18px;border-radius:8px;box-shadow:0 6px 30px rgba(13,20,30,0.06)}
+.panel h2,h3{margin-top:6px}
+.panel label{display:block;margin:10px 0}
+#reason{width:100%;box-sizing:border-box}
+#gratitude-list input{width:100%;margin:6px 0;padding:8px}
+button{background:#2b8aef;color:#fff;border:none;padding:8px 12px;border-radius:6px;cursor:pointer}
+button[disabled]{opacity:.5}
+#suggestions{margin-top:10px}
+#advice{background:#fbfbfb;padding:10px;border-radius:6px;border:1px solid #f0f0f0}
+
+/* emotion color mapping */
+.leaf[data-emotion="happy"]{background:linear-gradient(135deg,#ffd66b,#ffb347)}
+.leaf[data-emotion="sad"]{background:linear-gradient(135deg,#9ec2ff,#6fa8ff)}
+.leaf[data-emotion="angry"]{background:linear-gradient(135deg,#ff9b9b,#ff6b6b)}
+.leaf[data-emotion="anxious"]{background:linear-gradient(135deg,#d9b3ff,#b58cff)}
+.leaf[data-emotion="grateful"]{background:linear-gradient(135deg,#b7f0c0,#66d48e)}
+.leaf[data-emotion="neutral"]{background:linear-gradient(135deg,#e6e6e6,#cfcfcf)}
+
+.selected{outline:3px solid rgba(43,138,239,0.18);transform:scale(1.08)}
+.leaf.dragging{opacity:0.85;transform:scale(1.02);z-index:999}
+
+/* modal */
+.modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.4);z-index:60;visibility:hidden;opacity:0;transition:opacity .18s}
+.modal[aria-hidden="false"]{visibility:visible;opacity:1}
+.modal-content{background:#fff;padding:18px;border-radius:10px;width:480px;max-width:92%;box-shadow:0 12px 40px rgba(0,0,0,0.16)}
+.modal-content h2{margin-top:0}
+.modal-actions{display:flex;justify-content:flex-end;margin-top:12px}
+.modal-content input{width:100%;padding:8px;margin:6px 0}
+
+/* combine effect */
+.combine-effect{position:fixed;inset:0;pointer-events:none;opacity:0;transition:opacity .25s}
+.combine-effect.active{opacity:1}
+.combine-effect::before{content:'';position:absolute;left:50%;top:30%;width:0;height:0;background:radial-gradient(circle at center, rgba(255,255,255,0.9), rgba(255,255,255,0));transform:translateX(-50%);border-radius:50%;box-shadow:0 0 120px 40px rgba(255,240,200,0.6);animation:burst .9s forwards}
+@keyframes burst{0%{width:0;height:0;opacity:1}50%{width:700px;height:700px;opacity:1}100%{width:1200px;height:1200px;opacity:0}}
+
+/* roots */
+.roots{position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);width:200px;height:120px;pointer-events:none;opacity:0;transition:opacity .4s ease}
+.root{position:absolute;width:40%;height:100%;background:linear-gradient(180deg,#6e3f24,#4b2b18);border-radius:30px 30px 10px 10px;transform-origin:top center}
+.root-left{left:0;transform:rotate(-12deg) translateY(10px)}
+.root-right{right:0;transform:rotate(12deg) translateY(10px)}
+
+/* combined state: leaves move to trunk and roots appear */
+.tree.combined .canopy .leaf{transition:transform .6s cubic-bezier(.2,.9,.3,1), left .6s, top .6s, opacity .6s}
+.tree.combined .canopy .leaf{left:50% !important; top:18% !important; transform:translateX(-50%) scale(.86); opacity:0.95}
+.tree.combined .trunk{box-shadow:0 10px 40px rgba(0,0,0,0.12), inset 0 -6px 12px rgba(0,0,0,0.06)}
+.tree.combined .roots{opacity:1}
+
+/* ensure combined looks attached from the start */
+.tree.combined .canopy{pointer-events:none}
+
+/* archive */
+.archive-item{display:flex;align-items:center;justify-content:space-between;padding:8px;border:1px solid #eee;margin:8px 0;border-radius:6px}
+.archive-item button{background:#6aa84f;padding:6px 8px}
+.archive-meta{font-size:12px;color:#666}
+
+.archive-actions{display:flex;gap:8px;margin-top:8px}
+.gratitude-item{padding:8px;border:1px solid #f0f0f0;margin:6px 0;border-radius:6px}
